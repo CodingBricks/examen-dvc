@@ -1,0 +1,61 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/data/splitting.py && python src/data/normalize.py
+    deps:
+    - path: data/raw_data
+      hash: md5
+      md5: dfa899a0a65068095baf3c081a02eb8f.dir
+      size: 333781
+      nfiles: 2
+    - path: src/data/normalize.py
+      hash: md5
+      md5: 81560c6a11fea77cf22720fc566551dd
+      size: 1172
+    - path: src/data/splitting.py
+      hash: md5
+      md5: c8bdf406b15a2c0f582ff143dd169a16
+      size: 1473
+    outs:
+    - path: data/processed_data
+      hash: md5
+      md5: b2c1644fa7a5ff707ff197dcb4e3e0c4.dir
+      size: 577738
+      nfiles: 7
+  train:
+    cmd: python src/models/gridsearch.py && python src/models/train.py
+    deps:
+    - path: data/processed_data
+      hash: md5
+      md5: b2c1644fa7a5ff707ff197dcb4e3e0c4.dir
+      size: 577738
+      nfiles: 7
+    - path: src/models/gridsearch.py
+      hash: md5
+      md5: e336970f8d912a7489ea25ae1a0b4948
+      size: 1569
+    - path: src/models/train.py
+      hash: md5
+      md5: 0316e390ace61c53ed8515eb96f3e674
+      size: 1002
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 65ef1b23cdd290ccf5f863e8e6f295f8
+      size: 5747937
+  evaluate:
+    cmd: python src/models/evaluate.py
+    deps:
+    - path: models/model.pkl
+      hash: md5
+      md5: 65ef1b23cdd290ccf5f863e8e6f295f8
+      size: 5747937
+    - path: src/models/evaluate.py
+      hash: md5
+      md5: 5284ff758011d65c72470b72c22b3a24
+      size: 1468
+    outs:
+    - path: metrics/scores.json
+      hash: md5
+      md5: 232d5228a3dbd9ce5b9f07c8f41fb4bd
+      size: 83

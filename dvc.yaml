@@ -1,0 +1,25 @@
+stages:
+  prepare:
+    cmd: python src/data/splitting.py && python src/data/normalize.py
+    deps:
+    - data/raw_data
+    - src/data/normalize.py
+    - src/data/splitting.py
+    outs:
+    - data/processed_data
+  train:
+    cmd: python src/models/gridsearch.py && python src/models/train.py
+    deps:
+    - data/processed_data
+    - src/models/gridsearch.py
+    - src/models/train.py
+    outs:
+    - models/model.pkl
+  evaluate:
+    cmd: python src/models/evaluate.py
+    deps:
+    - models/model.pkl
+    - src/models/evaluate.py
+    metrics:
+    - metrics/scores.json:
+        cache: false
